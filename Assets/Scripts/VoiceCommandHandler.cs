@@ -50,6 +50,17 @@ public class VoiceCommandHandler : MonoBehaviour
         Debug.Log($"Neocortex Action: {action}");
         Debug.Log($"Neocortex Message: {response.message}");
 
+        string jsonString = JsonUtility.ToJson(response, true);
+
+        // 3. Stampa il JSON nella console
+        //    Uso LogWarning così appare in giallo ed è facile da trovare
+        Debug.LogWarning("--- INIZIO DEBUG JSON DA NEOCORTEX ---");
+        Debug.Log(jsonString);
+        Debug.LogWarning("--- FINE DEBUG JSON DA NEOCORTEX ---");
+
+
+
+
         if (string.IsNullOrEmpty(action))
         {
             StartCoroutine(MyCoroutine());
@@ -93,7 +104,53 @@ public class VoiceCommandHandler : MonoBehaviour
         }
         else if (action == "HARVEST_CROP")
         {
-            List<int> harvesteable = farmManager.FindFullyGrownPlots(null);
+            // 1. Estrai i parametri dai metadati.
+            //    Ci interessa solo 'cropName'. 'quantity' verrà ignorato.
+            ExtractPlantParameters(response.metadata, out string cropName, out int quantity);
+
+            CropData cropToFind = null;
+
+            // 2. Se l'IA ha estratto un nome di coltura, trovalo nel tuo array 'crops'.
+            //    (Questo presume che 'farmManager.crops' sia public o accessibile)
+            if (!string.IsNullOrEmpty(cropName))
+            {
+                Debug.Log($"Harvesting specific crop: {cropName}");
+
+                // NOTA: Questi indici (1, 2, 3, 4) sono basati
+                // sulla tua logica 'PlantCrop'. Assicurati che siano corretti!
+                switch (cropName.ToLower())
+                {
+                    case "carrot":
+                        cropToFind = farmManager.crops[1];
+                        break;
+                    case "corn":
+                        cropToFind = farmManager.crops[2];
+                        break;
+                    case "pumpkin":
+                        cropToFind = farmManager.crops[3];
+                        break;
+                    case "wheat":
+                        // (Nella tua richiesta hai scritto "pumpkin" sia per 3 che per 4,
+                        //  ma il tuo 'PlantCrop' usa 4 per 'wheat')
+                        cropToFind = farmManager.crops[4];
+                        break;
+                }
+            }
+            else
+            {
+                // 3. Se 'cropName' è nullo, significa che l'utente vuole raccogliere TUTTO.
+                Debug.Log("Harvesting all fully grown plots.");
+                // cropToFind rimane null (come richiesto)
+            }
+
+            // 4. Chiama la funzione del FarmManager con il CropData corretto (o null)
+            List<int> harvesteable = farmManager.FindFullyGrownPlots(cropToFind);
+
+            if (harvesteable.Count == 0)
+            {
+                Debug.Log("Nessuna coltura pronta per il raccolto trovata.");
+            }
+
             foreach (int i in harvesteable)
             {
                 farmManager.HarvestCrop(i);
