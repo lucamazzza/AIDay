@@ -14,38 +14,44 @@ public class VoiceCommandHandler : MonoBehaviour
     // Non serve più trascinarli nell'Inspector, li prendiamo automaticamente
     [SerializeField] private NeocortexSmartAgent agent;
     [SerializeField] private AudioReceiver audioReceiver;
-    private String response = "";
+
 
     void Start()
     {
+        // 1. Ottenere i componenti e verificarli
+        agent = GetComponent<NeocortexSmartAgent>();
+        audioReceiver = GetComponent<AudioReceiver>();
 
+        if (agent == null || audioReceiver == null)
+        {
+            Debug.LogError("Mancano i componenti richiesti (NeocortexSmartAgent o AudioReceiver).");
+            return;
+        }
 
+        // 2. Iscrizione agli Eventi
 
+        // Evento: Ricezione della Trascrizione (Utile per debug)
         agent.OnTranscriptionReceived.AddListener((message) =>
         {
-            Debug.Log($"You: {message}");
-            response = message;
+            Debug.Log($"You (Transcription): {message}");
         });
 
-        var audioReceiver = GetComponent<NeocortexAudioReceiver>();
+        // Evento: Audio Registrato (Invia l'audio all'Agente)
         audioReceiver.OnAudioRecorded.AddListener((audioClip) =>
         {
-            Debug.Log($"Audio Data Length: {audioClip.samples}");
-            agent.AudioToText(audioClip);
+            Debug.Log($"Audio registrato ({audioClip.samples} campioni), invio a Neocortex...");
+            // Non usiamo AudioToText per avere solo la trascrizione, ma 
+            // AudioToAudio per ottenere l'azione e la risposta vocale.
+            agent.AudioToAudio(audioClip);
         });
 
-
+        // Evento: Risposta Chat (L'AZIONE e i parametri)
+        agent.OnChatResponseReceived.AddListener(HandleChatResponse);
         StartCoroutine(MyCoroutine());
-        if (response.Length > 0)
-            agent.TextToText(response);
-
-        agent.OnChatResponseReceived.AddListener((response) =>
-        {
-            Debug.Log($"Message: {response.message}");
-        });
+        Debug.Log("Sistema pronto. In attesa del tuo primo comando...");
     }
 
-        IEnumerator MyCoroutine()
+    IEnumerator MyCoroutine()
     {
    
 
@@ -56,6 +62,15 @@ public class VoiceCommandHandler : MonoBehaviour
 
     }
 
+    private void HandleChatResponse(ChatResponse response)
+    {
+
+        // RI-AVVIO 2: Dopo aver gestito l'azione, riavvia il microfono 
+        // per essere pronto per il comando successivo
+        Debug.Log($"Message from Neocortex: {response.message}");
+        StartCoroutine(MyCoroutine());
+    }
+
     // Chiamato quando l'utente smette di parlare
     private void HandleAudioRecorded(AudioClip clip)
     {
@@ -64,51 +79,7 @@ public class VoiceCommandHandler : MonoBehaviour
         agent.AudioToAudio(clip);
     }
 
-    // Chiamato quando Neocortex ha analizzato l'audio e invia una risposta
-    private void HandleChatResponse(ChatResponse response)
-    {
-        // Estrai l'azione (es. "PLANT_CROP")
-        string actionName = response.action;
-
-        // Estrai le entità (es. {"crop_name": "wheat", "plot_id": "1"})
-        // Questo è il nome più probabile per la variabile, basato sul tuo tutorial
-        //Dictionary<string, string> entities = response.parameters;
-
-        // Se non c'è nessuna azione, era solo una chiacchiera. Riavviamo il microfono.
-        if (string.IsNullOrEmpty(actionName))
-        {
-            Debug.Log("Nessuna azione rilevata, riavvio l'ascolto.");
-            audioReceiver.StartMicrophone();
-            return;
-        }
-
-        // --- Da qui, il tuo codice originale funziona quasi perfettamente ---
-
-        Debug.Log($"Azione Ricevuta: {actionName}");
-
-        // Converti "PLANT_CROP" in "PlantCrop" per farlo funzionare con lo switch
-        //string formattedActionName = FormatActionName(actionName);
-
-        //switch (formattedActionName)
-        //{
-        //    case "PlantCrop":
-        //        HandlePlantAction(entities);
-        //        break;
-
-        //    case "HarvestCrop":
-        //        HandleHarvestAction(entities);
-        //        break;
-
-        //    default:
-        //        Debug.LogWarning($"Azione Sconosciuta: {actionName}");
-        //        break;
-        //}
-
-        // IMPORTANTE: Dopo aver gestito l'azione, riavvia il microfono
-        // Il sample lo fa dopo che la clip audio di risposta è finita.
-        // Noi lo facciamo subito per semplicità.
-        audioReceiver.StartMicrophone();
-    }
+    
 
     // --- I TUOI VECCHI METODI (vanno bene così) ---
 
