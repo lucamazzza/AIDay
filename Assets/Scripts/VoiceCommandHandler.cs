@@ -14,6 +14,7 @@ public class VoiceCommandHandler : MonoBehaviour
     // Non serve pi� trascinarli nell'Inspector, li prendiamo automaticamente
     [SerializeField] private NeocortexSmartAgent agent;
     [SerializeField] private AudioReceiver audioReceiver;
+    [SerializeField] private FarmManager farmManager;
 
 
     void Start()
@@ -21,6 +22,7 @@ public class VoiceCommandHandler : MonoBehaviour
         // 1. Ottenere i componenti e verificarli
         agent = GetComponent<NeocortexSmartAgent>();
         audioReceiver = GetComponent<AudioReceiver>();
+        
 
         if (agent == null || audioReceiver == null)
         {
@@ -62,10 +64,33 @@ public class VoiceCommandHandler : MonoBehaviour
 
     private void HandleChatResponse(ChatResponse response)
     {
+        string action = response.action;
+        Debug.Log($"Neocortex: {response.action}");
+
+        if (!string.IsNullOrEmpty(action))
+        {
+            if (action == "PLANT_CROP")
+            {
+                int plotId = farmManager.FindAvailablePlot();
+                if (plotId != -1)
+                {
+                    farmManager.PlantCrop("carrot", plotId);  
+                }
+            }
+            //else if (action == "HARVEST_CROP")
+            //{
+            //    farmManager.HarvestCrop
+            //}
+            else
+            {
+                Debug.LogWarning($"Azione non riconosciuta: {action}");
+            }
+        }
 
         // RI-AVVIO 2: Dopo aver gestito l'azione, riavvia il microfono 
         // per essere pronto per il comando successivo
         Debug.Log($"Neocortex: {response.message}");
+        
         StartCoroutine(MyCoroutine());
     }
 

@@ -3358,6 +3358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoiceCommandHandler
   agent: {fileID: 1534292128}
   audioReceiver: {fileID: 1534292127}
+  farmManager: {fileID: 601779376}
 --- !u!82 &1534292126
 AudioSource:
   m_ObjectHideFlags: 0

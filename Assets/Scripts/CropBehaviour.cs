@@ -14,26 +14,7 @@ public class CropBehaviour : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        if (cropData == null) 
-        {
-            Debug.LogWarning("No crop data for this crop behavior");
-            return;
-        }
-        currentGrowthStage = 0;
-        growthTimer = 0;
-        isFullyGrown = false;
-
-        if (cropData.growthStages.Length > 0) {
-            spriteRenderer.sprite = cropData.growthStages[0];
-        }
-        else 
-        {
-            Debug.LogError("CropData has no growth stages");
-        }
-    }
+    
 
     // Update is called once per frame
     void Update()
@@ -60,7 +41,36 @@ public class CropBehaviour : MonoBehaviour
             isFullyGrown = true;
         }
     }
-    
+
+    public void SetCrop(CropData newData)
+    {
+       
+
+        if (newData == null)
+        {
+            Debug.LogWarning("SetCrop chiamato con dati nulli (probabilmente raccolto).");
+            //ResetCrop(); // Se i dati sono nulli, resetta il campo
+            return;
+        }
+
+        this.cropData = newData;
+
+
+        // Inizializza e resetta lo stato di crescita
+        currentGrowthStage = 0;
+        growthTimer = 0;
+        isFullyGrown = false;
+
+        if (cropData.growthStages.Length > 0)
+        {
+            spriteRenderer.sprite = cropData.growthStages[0];
+        }
+        else
+        {
+            Debug.LogError("CropData non ha stadi di crescita!");
+        }
+    }
+
     private void UpdateCropSprite()
     {
         if (currentGrowthStage < cropData.growthStages.Length)

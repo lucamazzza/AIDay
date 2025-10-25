@@ -10,7 +10,7 @@ public class FarmManager : MonoBehaviour
     public CropData[] crops;
 
     // 2. Trascina il tuo oggetto StatusText (dalla Hierarchy) qui
-    public TextMeshProUGUI statusText;
+    //public TextMeshProUGUI statusText;
 
     public static FarmManager Instance { get; private set; }
 
@@ -29,62 +29,91 @@ public class FarmManager : MonoBehaviour
     // Chiamato da VoiceCommandHandler
     public void PlantCrop(string cropName, int plotId)
     {
-        if (!plotExists(plotId)) return;
+        int arrayIndex = plotId;
+        if (!PlotExists(plotId)) return;
 
-        // Ottiene il componente SpriteRenderer (per il 2D)
-        var plotCropData = farmPlots[plotId - 1].GetComponent<CropData>();
+        CropBehaviour targetCropBehaviour = farmPlots[arrayIndex].GetComponent<CropBehaviour>();
+
+        if (targetCropBehaviour == null)
+        {
+            Debug.LogError($"FATALE: Componente CropBehaviour mancante sul plot {plotId}.");
+            return;
+        }
+
+        // 2. Assegna il dato.
+        // Usiamo una variabile temporanea per chiarezza, se necessario.
+        CropData newCropData = null;
 
         switch (cropName.ToLower())
         {
             case "wheat":
-                plotCropData = crops[4]; 
+                newCropData = crops[4]; 
                 break;
             case "corn":
-                plotCropData = crops[2];
+                newCropData = crops[2];
                 break;
             case "carrot":
-                plotCropData = crops[1];
+                newCropData = crops[1];
                 break;
             case "pumpkin":
-                plotCropData = crops[3];
+                newCropData = crops[3];
                 break;
             default:
-                statusText.text = $"Error: Crop '{cropName}' is not recognized.";
+                //statusText.text = $"Error: Crop '{cropName}' is not recognized.";
                 Debug.LogError($"Error: Crop '{cropName}' is not recognized.");
                 return; // Non aggiornare il testo se il raccolto non � valido
         }
 
+        targetCropBehaviour.SetCrop(newCropData);
+
+
+
         // Aggiorna il testo solo se l'azione ha successo
         string message = $"Planting {cropName} on plot {plotId}.";
-        statusText.text = message;
+        //statusText.text = message;
         Debug.Log(message);
     }
 
     // Chiamato da VoiceCommandHandler
     public void HarvestCrop(int plotId)
     {
-        if (!plotExists(plotId)) return;
+        if (!PlotExists(plotId)) return;
 
         // Ottiene il componente SpriteRenderer
-        var plotCropData = farmPlots[plotId - 1].GetComponent<CropData>();
+        var plotCropData = farmPlots[plotId - 1].GetComponent<CropBehaviour>().cropData;
         
         // Reimposta lo sprite a quello del campo vuoto
         plotCropData = crops[0]; 
 
         string message = $"Harvesting plot {plotId}.";
-        statusText.text = message;
+        //statusText.text = message;
         Debug.Log(message);
     }
 
     // Funzione helper per controllare se il plot esiste
-    private bool plotExists(int plotId)
+    private bool PlotExists(int plotId)
     {
-        if (plotId < 1 || plotId > farmPlots.Length)
+        if (plotId < 0 || plotId > farmPlots.Length)
         {
-            statusText.text = $"Error: Plot {plotId} does not exist.";
+            //statusText.text = $"Error: Plot {plotId} does not exist.";
             Debug.LogError($"Error: Plot {plotId} does not exist.");
             return false;
         }
         return true;
+    }
+
+    public int FindAvailablePlot()
+    {
+        for (int i = 0; i< farmPlots.Length; i++)
+        {
+            var plot = farmPlots[i];
+            var plotCropData = plot.GetComponent<CropBehaviour>().cropData;
+            if (plotCropData == crops[0])
+            {
+                return i;
+            }
+        }
+        Debug.Log("No available plots found.");
+        return -1;
     }
 }
