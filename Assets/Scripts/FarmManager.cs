@@ -1,14 +1,25 @@
 using UnityEngine;
 using TMPro;
 
+// Questo script gestisce la logICA del gioco.
 public class FarmManager : MonoBehaviour
 {
+    // 1. Trascina i tuoi 3 oggetti Plot (dalla Hierarchy) in questo array
     public GameObject[] farmPlots;
+
+    // 2. Trascina il tuo oggetto StatusText (dalla Hierarchy) qui
     public TextMeshProUGUI statusText;
 
-    public static FarmManager Instance { get; private set; } 
-    
-    void Awake() 
+    // 3. Trascina i tuoi asset Sprite (dalla cartella Project) qui
+    public Sprite emptyPlotSprite; // L'immagine del campo vuoto
+    public Sprite wheatSprite;     // L'immagine del grano
+    public Sprite cornSprite;      // L'immagine del mais
+    public Sprite carrotSprite;    // L'immagine della carota
+    // (Aggiungine altri se necessario)
+
+    public static FarmManager Instance { get; private set; }
+
+    void Awake()
     {
         if (Instance == null)
         {
@@ -20,45 +31,55 @@ public class FarmManager : MonoBehaviour
         }
     }
 
+    // Chiamato da VoiceCommandHandler
     public void PlantCrop(string cropName, int plotId)
     {
         if (!plotExists(plotId)) return;
-        var plotRenderer = farmPlots[plotId - 1].GetComponent<Renderer>();
-        switch (cropName.ToLower()) 
+
+        // Ottiene il componente SpriteRenderer (per il 2D)
+        var plotRenderer = farmPlots[plotId - 1].GetComponent<SpriteRenderer>();
+
+        switch (cropName.ToLower())
         {
-            //TODO: Change the assets to represent different crops
-            //TODO: Add more crops as needed
             case "wheat":
-                plotRenderer.material.color = Color.yellow;
+                plotRenderer.sprite = wheatSprite; // Assegna il nuovo sprite
                 break;
             case "corn":
-                plotRenderer.material.color = Color.green;
+                plotRenderer.sprite = cornSprite;
                 break;
             case "carrot":
-                plotRenderer.material.color = new Color(1.0f, 0.5f, 0.0f); // Orange
+                plotRenderer.sprite = carrotSprite;
                 break;
             default:
                 statusText.text = $"Error: Crop '{cropName}' is not recognized.";
                 Debug.LogError($"Error: Crop '{cropName}' is not recognized.");
-                break;
+                return; // Non aggiornare il testo se il raccolto non è valido
         }
+
+        // Aggiorna il testo solo se l'azione ha successo
+        string message = $"Planting {cropName} on plot {plotId}.";
+        statusText.text = message;
+        Debug.Log(message);
     }
-    
+
+    // Chiamato da VoiceCommandHandler
     public void HarvestCrop(int plotId)
     {
         if (!plotExists(plotId)) return;
 
-        // TODO: Change the asset to empty field
-        var plotRenderer = farmPlots[plotId - 1].GetComponent<Renderer>();
-        plotRenderer.material.color = Color.white; // White = empty
+        // Ottiene il componente SpriteRenderer
+        var plotRenderer = farmPlots[plotId - 1].GetComponent<SpriteRenderer>();
+
+        // Reimposta lo sprite a quello del campo vuoto
+        plotRenderer.sprite = emptyPlotSprite;
 
         string message = $"Harvesting plot {plotId}.";
         statusText.text = message;
         Debug.Log(message);
     }
 
-
-    private bool plotExists(int plotId) 
+    // Funzione helper per controllare se il plot esiste
+    private bool plotExists(int plotId)
     {
         if (plotId < 1 || plotId > farmPlots.Length)
         {
