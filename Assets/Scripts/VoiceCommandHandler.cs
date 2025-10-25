@@ -47,35 +47,66 @@ public class VoiceCommandHandler : MonoBehaviour
     private void HandleChatResponse(ChatResponse response)
     {
         string action = response.action;
-        Debug.Log($"Neocortex: {response.action}");
+        Debug.Log($"Neocortex Action: {action}");
+        Debug.Log($"Neocortex Message: {response.message}");
 
-        if (!string.IsNullOrEmpty(action))
+        if (string.IsNullOrEmpty(action))
         {
-            if (action == "PLANT_CROP")
+            StartCoroutine(MyCoroutine());
+            return;
+        }
+
+        if (action == "PLANT_CROP")
+        {
+            // 1. Estrai i parametri dall'array metadata
+            ExtractPlantParameters(response.metadata, out string cropName, out int quantity);
+
+            // 2. Controlla se abbiamo tutto
+            if (string.IsNullOrEmpty(cropName) || quantity == 0)
+            {
+                // A volte la quantità è "una" (stringa), prova a cercarla se la quantità è 0
+                if (string.IsNullOrEmpty(cropName)) Debug.LogError("Azione PLANT_CROP: 'crop_name' non trovato.");
+                if (quantity == 0) Debug.LogWarning("Azione PLANT_CROP: 'quantity' non trovata o è 0.");
+
+                StartCoroutine(MyCoroutine());
+                return;
+            }
+
+            // 3. Esegui un ciclo per la quantità richiesta
+            Debug.Log($"Tentativo di piantare {quantity} {cropName}...");
+            int plantedCount = 0;
+            for (int i = 0; i < quantity; i++)
             {
                 int plotId = farmManager.FindAvailablePlot();
                 if (plotId != -1)
                 {
-                    farmManager.PlantCrop("carrot", plotId);  
+                    farmManager.PlantCrop(cropName, plotId);
+                    plantedCount++;
                 }
-            }
-            else if (action == "HARVEST_CROP")
-            {
-                List<int> harvesteable = FarmManager.Instance.FindFullyGrownPlots(null);
-                foreach (int i in harvesteable)
+                else
                 {
-                    farmManager.HarvestCrop(i);
+                    Debug.LogWarning($"Non ci sono più plot liberi. Piantati {plantedCount}/{quantity} {cropName}.");
+                    break;
                 }
             }
-            else
+            Debug.Log($"Piantati {plantedCount} {cropName} in totale.");
+        }
+        else if (action == "HARVEST_CROP")
+        {
+            List<int> harvesteable = farmManager.FindFullyGrownPlots(null);
+            foreach (int i in harvesteable)
             {
-                Debug.LogWarning($"Azione non riconosciuta: {action}");
+                farmManager.HarvestCrop(i);
             }
         }
-        text.text = response.message;
-        Debug.Log($"Neocortex: {response.message}");
+        else
+        {
+            Debug.LogWarning($"Azione non riconosciuta: {action}");
+        }
+
         StartCoroutine(MyCoroutine());
     }
+     
 
     private void HandleAudioRecorded(AudioClip clip)
     {
@@ -158,4 +189,53 @@ public class VoiceCommandHandler : MonoBehaviour
         }
         return char.ToUpper(actionName[0]) + actionName.Substring(1);
     }
+
+    /// <summary>
+    /// Estrae il nome della coltura e la quantità dall'array metadata.
+    /// Questo codice è progettato per leggere il JSON che hai fornito.
+    /// </summary>
+    private void ExtractPlantParameters(Interactable[] metadata, out string cropName, out int quantity)
+    {
+        // Imposta i valori di default
+        cropName = null;
+        quantity = 0;
+
+        if (metadata == null || metadata.Length == 0)
+        {
+            Debug.LogWarning("ExtractPlantParameters fallito: array metadata è vuoto.");
+            return;
+        }
+
+        foreach (Interactable item in metadata)
+        {
+            if (item == null || string.IsNullOrEmpty(item.name)) continue;
+
+            // Tenta di convertire il 'name' in un numero
+            if (int.TryParse(item.name, out int parsedQuantity))
+            {
+                // È un numero! Salvalo come quantità.
+                quantity = parsedQuantity;
+            }
+            // Controlla se è una delle nostre colture conosciute
+            else if (IsKnownCrop(item.name))
+            {
+                // È un nome di coltura! Salvalo.
+                cropName = item.name.ToLower();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Funzione helper per verificare se una stringa è una coltura valida.
+    /// </summary>
+    private bool IsKnownCrop(string name)
+    {
+        string lowerName = name.ToLower();
+        return lowerName == "wheat" ||
+               lowerName == "corn" ||
+               lowerName == "carrot" ||
+               lowerName == "pumpkin";
+    }
 }
+
+
