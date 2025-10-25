@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1309437570052469419}
   - component: {fileID: 3389384856831602212}
+  - component: {fileID: -6461454830864232292}
   m_Layer: 0
   m_Name: EmptyField
   m_TagString: Untagged
@@ -90,3 +91,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-6461454830864232292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6896799592003219725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2bc78ad8a35f4048bdb3716a0a5db31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CropBehaviour
+  cropData: {fileID: 11400000, guid: c2ccc3c7dd9b84bf4bb0b9d185dc5695, type: 2}

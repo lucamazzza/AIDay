@@ -1244,7 +1244,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 601779375}
-  - component: {fileID: 601779374}
+  - component: {fileID: 601779376}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1252,7 +1252,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &601779374
+--- !u!4 &601779375
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601779373}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.17564, y: 2.79994, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &601779376
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1289,26 +1304,13 @@ MonoBehaviour:
   - {fileID: 2112921649}
   - {fileID: 829395538}
   - {fileID: 22237459}
+  crops:
+  - {fileID: 11400000, guid: c2ccc3c7dd9b84bf4bb0b9d185dc5695, type: 2}
+  - {fileID: 11400000, guid: dac57e4d5403a4d6d95756e74bf393b2, type: 2}
+  - {fileID: 11400000, guid: 58d6474e1cf0d43c6b29f0633e11ef52, type: 2}
+  - {fileID: 11400000, guid: 0ba26fc006a7b40b794c2427f92614f2, type: 2}
+  - {fileID: 11400000, guid: ca88c925b3d4145aa82c129caee690e0, type: 2}
   statusText: {fileID: 0}
-  emptyPlotSprite: {fileID: 0}
-  wheatSprite: {fileID: 0}
-  cornSprite: {fileID: 0}
-  carrotSprite: {fileID: 0}
---- !u!4 &601779375
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 601779373}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.17564, y: 2.79994, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &604542676
 PrefabInstance:
   m_ObjectHideFlags: 0

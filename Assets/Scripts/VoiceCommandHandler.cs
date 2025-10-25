@@ -11,7 +11,7 @@ using System;
 
 public class VoiceCommandHandler : MonoBehaviour
 {
-    // Non serve più trascinarli nell'Inspector, li prendiamo automaticamente
+    // Non serve piï¿½ trascinarli nell'Inspector, li prendiamo automaticamente
     [SerializeField] private NeocortexSmartAgent agent;
     [SerializeField] private AudioReceiver audioReceiver;
 
@@ -39,7 +39,6 @@ public class VoiceCommandHandler : MonoBehaviour
         // Evento: Audio Registrato (Invia l'audio all'Agente)
         audioReceiver.OnAudioRecorded.AddListener((audioClip) =>
         {
-            Debug.Log($"Audio registrato ({audioClip.samples} campioni), invio a Neocortex...");
             // Non usiamo AudioToText per avere solo la trascrizione, ma 
             // AudioToAudio per ottenere l'azione e la risposta vocale.
             agent.AudioToAudio(audioClip);
@@ -48,7 +47,6 @@ public class VoiceCommandHandler : MonoBehaviour
         // Evento: Risposta Chat (L'AZIONE e i parametri)
         agent.OnChatResponseReceived.AddListener(HandleChatResponse);
         StartCoroutine(MyCoroutine());
-        Debug.Log("Sistema pronto. In attesa del tuo primo comando...");
     }
 
     IEnumerator MyCoroutine()
@@ -67,27 +65,26 @@ public class VoiceCommandHandler : MonoBehaviour
 
         // RI-AVVIO 2: Dopo aver gestito l'azione, riavvia il microfono 
         // per essere pronto per il comando successivo
-        Debug.Log($"Message from Neocortex: {response.message}");
+        Debug.Log($"Neocortex: {response.message}");
         StartCoroutine(MyCoroutine());
     }
 
     // Chiamato quando l'utente smette di parlare
     private void HandleAudioRecorded(AudioClip clip)
     {
-        Debug.Log("Audio registrato, invio a Neocortex...");
         // Invia la clip audio all'agente per l'analisi
         agent.AudioToAudio(clip);
     }
 
     
 
-    // --- I TUOI VECCHI METODI (vanno bene così) ---
+    // --- I TUOI VECCHI METODI (vanno bene cosï¿½) ---
 
     private void HandlePlantAction(Dictionary<string, string> entities)
     {
         if (entities == null)
         {
-            Debug.LogError("HandlePlantAction fallito: Dizionario entità è nullo.");
+            Debug.LogError("HandlePlantAction fallito: Dizionario entitÃ  nullo.");
             return;
         }
 
@@ -117,7 +114,7 @@ public class VoiceCommandHandler : MonoBehaviour
     {
         if (entities == null)
         {
-            Debug.LogError("HandleHarvestAction fallito: Dizionario entità è nullo.");
+            Debug.LogError("HandleHarvestAction fallito: Dizionario entitï¿½ ï¿½ nullo.");
             return;
         }
 
