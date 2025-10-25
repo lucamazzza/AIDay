@@ -226,6 +226,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7046754986024030339, guid: 9fb11cbe0f826481fab64e97fcbe85d7, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7046754986024030339, guid: 9fb11cbe0f826481fab64e97fcbe85d7, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -376,7 +384,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4590321334818181601, guid: 3ca4769170ffa4d5aa19e8b1dfdcbff7, type: 3}
   m_PrefabInstance: {fileID: 2642342112933530454}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1264830606064745992
+--- !u!114 &8996458176882175931
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
