@@ -1,16 +1,11 @@
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
-// Questo script gestisce la logICA del gioco.
 public class FarmManager : MonoBehaviour
 {
-    // 1. Trascina i tuoi 3 oggetti Plot (dalla Hierarchy) in questo array
     public GameObject[] farmPlots;
-    
     public CropData[] crops;
-
-    // 2. Trascina il tuo oggetto StatusText (dalla Hierarchy) qui
-    //public TextMeshProUGUI statusText;
 
     public static FarmManager Instance { get; private set; }
 
@@ -26,24 +21,17 @@ public class FarmManager : MonoBehaviour
         }
     }
 
-    // Chiamato da VoiceCommandHandler
     public void PlantCrop(string cropName, int plotId)
     {
         int arrayIndex = plotId;
         if (!PlotExists(plotId)) return;
-
         CropBehaviour targetCropBehaviour = farmPlots[arrayIndex].GetComponent<CropBehaviour>();
-
         if (targetCropBehaviour == null)
         {
             Debug.LogError($"FATALE: Componente CropBehaviour mancante sul plot {plotId}.");
             return;
         }
-
-        // 2. Assegna il dato.
-        // Usiamo una variabile temporanea per chiarezza, se necessario.
         CropData newCropData = null;
-
         switch (cropName.ToLower())
         {
             case "wheat":
@@ -59,43 +47,28 @@ public class FarmManager : MonoBehaviour
                 newCropData = crops[3];
                 break;
             default:
-                //statusText.text = $"Error: Crop '{cropName}' is not recognized.";
                 Debug.LogError($"Error: Crop '{cropName}' is not recognized.");
-                return; // Non aggiornare il testo se il raccolto non � valido
+                return; 
         }
-
         targetCropBehaviour.SetCrop(newCropData);
-
-
-
-        // Aggiorna il testo solo se l'azione ha successo
         string message = $"Planting {cropName} on plot {plotId}.";
-        //statusText.text = message;
         Debug.Log(message);
     }
 
-    // Chiamato da VoiceCommandHandler
     public void HarvestCrop(int plotId)
     {
         if (!PlotExists(plotId)) return;
-
-        // Ottiene il componente SpriteRenderer
-        var plotCropData = farmPlots[plotId - 1].GetComponent<CropBehaviour>().cropData;
-        
-        // Reimposta lo sprite a quello del campo vuoto
-        plotCropData = crops[0]; 
-
+        CropBehaviour targetCropBehaviour = farmPlots[plotId].GetComponent<CropBehaviour>();
+        if (!targetCropBehaviour.isFullyGrown) return;
+        targetCropBehaviour.SetCrop(crops[0]); 
         string message = $"Harvesting plot {plotId}.";
-        //statusText.text = message;
         Debug.Log(message);
     }
 
-    // Funzione helper per controllare se il plot esiste
     private bool PlotExists(int plotId)
     {
         if (plotId < 0 || plotId > farmPlots.Length)
         {
-            //statusText.text = $"Error: Plot {plotId} does not exist.";
             Debug.LogError($"Error: Plot {plotId} does not exist.");
             return false;
         }
@@ -115,5 +88,28 @@ public class FarmManager : MonoBehaviour
         }
         Debug.Log("No available plots found.");
         return -1;
+    }
+    
+    public List<int> FindFullyGrownPlots(CropData crop) 
+    {
+        List<int> fullyGrown = new List<int>();
+        for (int i = 0; i < farmPlots.Length; i++)
+        {
+            if (crop == null)
+            {
+                if (farmPlots[i].GetComponent<CropBehaviour>().isFullyGrown) 
+                {
+                    fullyGrown.Add(i);
+                }
+            }
+            else
+            {
+                if (farmPlots[i].GetComponent<CropBehaviour>().isFullyGrown && farmPlots[i].GetComponent<CropBehaviour>().cropData == crop) 
+                {
+                    fullyGrown.Add(i);
+                }
+            }
+        }
+        return fullyGrown;
     }
 }

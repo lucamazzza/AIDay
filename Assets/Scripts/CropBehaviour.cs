@@ -4,12 +4,12 @@ using UnityEngine;
 public class CropBehaviour : MonoBehaviour
 {
     public CropData cropData;
+    public bool isFullyGrown = false;
     
     private SpriteRenderer spriteRenderer;
     private int currentGrowthStage = 0;
     private float growthTimer = 0f;
-    private bool isFullyGrown = false;
-
+    
     void Awake() 
     {
         spriteRenderer = GetComponent<SpriteRenderer>();

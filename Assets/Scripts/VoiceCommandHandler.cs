@@ -1,65 +1,45 @@
-using Neocortex; // Namespace principale
-using Neocortex.Data; // <-- IMPORTANTE: Aggiungi questo per ChatResponse
-using System.Collections.Generic; // Per le Dictionaries
+using Neocortex;
+using Neocortex.Data; 
+using System.Collections.Generic; 
 using UnityEngine;
 using System.Collections;
 using System;
 
-// Assicurati che il GameObject abbia entrambi i componenti
 [RequireComponent(typeof(NeocortexSmartAgent))]
 [RequireComponent(typeof(AudioReceiver))]
 
 public class VoiceCommandHandler : MonoBehaviour
 {
-    // Non serve pi� trascinarli nell'Inspector, li prendiamo automaticamente
     [SerializeField] private NeocortexSmartAgent agent;
     [SerializeField] private AudioReceiver audioReceiver;
     [SerializeField] private FarmManager farmManager;
 
-
     void Start()
     {
-        // 1. Ottenere i componenti e verificarli
         agent = GetComponent<NeocortexSmartAgent>();
         audioReceiver = GetComponent<AudioReceiver>();
-        
-
         if (agent == null || audioReceiver == null)
         {
             Debug.LogError("Mancano i componenti richiesti (NeocortexSmartAgent o AudioReceiver).");
             return;
         }
-
-        // 2. Iscrizione agli Eventi
-
-        // Evento: Ricezione della Trascrizione (Utile per debug)
         agent.OnTranscriptionReceived.AddListener((message) =>
         {
             Debug.Log($"You (Transcription): {message}");
         });
-
-        // Evento: Audio Registrato (Invia l'audio all'Agente)
         audioReceiver.OnAudioRecorded.AddListener((audioClip) =>
         {
-            // Non usiamo AudioToText per avere solo la trascrizione, ma 
-            // AudioToAudio per ottenere l'azione e la risposta vocale.
             agent.AudioToAudio(audioClip);
         });
-
-        // Evento: Risposta Chat (L'AZIONE e i parametri)
         agent.OnChatResponseReceived.AddListener(HandleChatResponse);
         StartCoroutine(MyCoroutine());
     }
 
     IEnumerator MyCoroutine()
     {
-   
-
-        // Start recording audio for 3 seconds
         audioReceiver.StartMicrophone();
-        yield return new WaitForSeconds(5f); // attende 2 secondi
+        yield return new WaitForSeconds(5f);
         audioReceiver.StopMicrophone();
-
     }
 
     private void HandleChatResponse(ChatResponse response)
@@ -77,33 +57,27 @@ public class VoiceCommandHandler : MonoBehaviour
                     farmManager.PlantCrop("carrot", plotId);  
                 }
             }
-            //else if (action == "HARVEST_CROP")
-            //{
-            //    farmManager.HarvestCrop
-            //}
+            else if (action == "HARVEST_CROP")
+            {
+                List<int> harvesteable = FarmManager.Instance.FindFullyGrownPlots(null);
+                foreach (int i in harvesteable)
+                {
+                    farmManager.HarvestCrop(i);
+                }
+            }
             else
             {
                 Debug.LogWarning($"Azione non riconosciuta: {action}");
             }
         }
-
-        // RI-AVVIO 2: Dopo aver gestito l'azione, riavvia il microfono 
-        // per essere pronto per il comando successivo
         Debug.Log($"Neocortex: {response.message}");
-        
         StartCoroutine(MyCoroutine());
     }
 
-    // Chiamato quando l'utente smette di parlare
     private void HandleAudioRecorded(AudioClip clip)
     {
-        // Invia la clip audio all'agente per l'analisi
         agent.AudioToAudio(clip);
     }
-
-    
-
-    // --- I TUOI VECCHI METODI (vanno bene cos�) ---
 
     private void HandlePlantAction(Dictionary<string, string> entities)
     {
@@ -142,20 +116,17 @@ public class VoiceCommandHandler : MonoBehaviour
             Debug.LogError("HandleHarvestAction fallito: Dizionario entit� � nullo.");
             return;
         }
-
         if (!entities.TryGetValue("plot_id", out string plotString))
         {
             Debug.LogError("HarvestCrop: 'plot_id' non trovato.");
             return;
         }
-
         int plotID = ParsePlotID(plotString);
         if (plotID == -1)
         {
             Debug.LogError($"Impossibile analizzare plot ID da: {plotString}");
             return;
         }
-
         FarmManager.Instance.HarvestCrop(plotID);
     }
 
@@ -168,11 +139,9 @@ public class VoiceCommandHandler : MonoBehaviour
         return -1;
     }
 
-    // Converte "PLANT_CROP" in "PlantCrop"
     private string FormatActionName(string actionName)
     {
         if (string.IsNullOrEmpty(actionName)) return string.Empty;
-
         if (actionName.Contains("_"))
         {
             string[] parts = actionName.Split('_');
@@ -184,7 +153,6 @@ public class VoiceCommandHandler : MonoBehaviour
             }
             return formattedName;
         }
-
         return char.ToUpper(actionName[0]) + actionName.Substring(1);
     }
 }
