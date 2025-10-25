@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41a6e71c2c8d57c43bc5726ec3a9f42d, type: 3}
   m_Name: NeocortexSettings
   m_EditorClassIdentifier: Neocortex.Runtime::Neocortex.Data.NeocortexSettings
-  apiKey: ' sk_2f83a1e4-7f1e-4496-8620-d576dcba187c'
+  apiKey: ' sk_45319aca-b0b8-4c85-bb43-385c8cd87fe3 '

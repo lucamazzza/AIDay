@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 using System;
+using TMPro;
 
 [RequireComponent(typeof(NeocortexSmartAgent))]
 [RequireComponent(typeof(AudioReceiver))]
@@ -13,6 +14,7 @@ public class VoiceCommandHandler : MonoBehaviour
     [SerializeField] private NeocortexSmartAgent agent;
     [SerializeField] private AudioReceiver audioReceiver;
     [SerializeField] private FarmManager farmManager;
+    [SerializeField] private TMP_Text text;
 
     void Start()
     {
@@ -70,6 +72,7 @@ public class VoiceCommandHandler : MonoBehaviour
                 Debug.LogWarning($"Azione non riconosciuta: {action}");
             }
         }
+        text.text = response.message;
         Debug.Log($"Neocortex: {response.message}");
         StartCoroutine(MyCoroutine());
     }
