@@ -1,6 +1,6 @@
-# 🎙️🌾 AIDay: An AI-Remake
+# 🎙️🌾 AIDay: An AI-Remake 
 
-> A submission for the Supercell Global AI Game Hackathon, reimagining game interaction with voice.
+> 3rd Place at Supercell Global AI Game Hackathon, *AI-Remake* Category.
 
 <center><img src="/Assets/Resources/image.png" height=500></center>
 
