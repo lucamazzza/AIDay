@@ -101,6 +101,6 @@ With more time, we would love to:
 
 * **Luca Mazza**: [GitHub](https://github.com/lucamazzza) | [LinkedIn](https://linkedin.com/in/lucamazzza)
 * **Giada Galdiolo**: [GitHub](https://github.com/giadagaldiolo) | [LinkedIn](https://linkedin.com/in/giadagaldiolo)
-* **Andre Peiti Ocampo**: [GitHub](https://github.com/linkswitch19) | [LinkedIn](https://www.linkedin.com/in/andre-peiti-ocampo-87a1a9313/)
+* **Andre Peiti Ocampo**: [GitHub](https://github.com/linkswitch19) | [LinkedIn](https://www.linkedin.com/in/andre-peiti-ocampo-87a1a9313/) | [Youtube] https://www.youtube.com/@linkswitch19
 
 *Thank you for judging our project!*
