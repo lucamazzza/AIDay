@@ -188,6 +188,7 @@ public class FarmManager : MonoBehaviour
         {
             Inventory["wheat"] -= 3;
             Debug.Log($"Sent one {recipeName} to bakery.");
+            UpdateInventoryUI();
         }
         else
         {
