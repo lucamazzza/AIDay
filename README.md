@@ -19,12 +19,11 @@ Our solution is an **AI-Remake** that uses natural voice commands to perform all
 
 ## ✨ Features
 
-* **Natural Language Commands:** No rigid keywords! Say "Plant some wheat on the first plot" or "Can you harvest plot 2?" and the AI understands.
+* **Natural Language Commands:** No rigid keywords! Say "Plant 3 pumpkins" or "Can you harvest carrots?" and the AI understands.
 * **Core Game Actions:**
-    * **Plant:** Plant different crops (wheat, corn, carrots) on specific plots.
+    * **Plant:** Plant different crops (wheat, corn, carrots, pumpkins) on specific plots.
     * **Harvest:** Harvest a specific plot, which automatically adds the item to your inventory.
-* **Full Inventory System:**
-    * Smart logic prevents planting on an occupied plot or harvesting an empty one.
+    * **Bake:** Use your harvested crops to bake food.
 * **Real-time UI:** The on-screen UI updates instantly to show the contents of your inventory.
 
 ---
@@ -33,16 +32,16 @@ Our solution is an **AI-Remake** that uses natural voice commands to perform all
 
  This project's "magic" comes from connecting a game engine (Unity) to a powerful conversational AI platform (Neocortex), which was one of the tools provided for the hackathon.
 
-1.  **Voice Input (Player):** The player speaks a command (e.g., "Harvest plot 2") into their microphone.
+1.  **Voice Input (Player):** The player speaks a command (e.g., "Plant 5 carrots") into their microphone.
 2.  **NLU (Neocortex):** The audio is streamed to the **Neocortex** platform. Neocortex's AI parses the audio and identifies:
-    * **The Intent (Action):** `HarvestCrop`
-    * **The Entities (Details):** `{"plot_id": "plot 2"}`
+    * **The Intent (Action):** `PlantCrop`
+    * **The Entities (Details):** ` [{"crop_name": "carrot"}`, `{"quantity": "5"}]`
 3.  **Command (SDK):** Neocortex sends this structured data (the intent and its entities) back to our game via its Unity SDK.
 4.  **Game Logic (Unity):**
     * A `VoiceCommandHandler.cs` script receives the event from the SDK.
-    * It safely parses the entities (e.g., converting "plot 2" to the integer `2`).
+    * It safely parses the entities (e.g., converting "carrot" into the corresponding CropData object).
     * It calls the appropriate function on our singleton `FarmManager.cs`.
-    * `FarmManager.cs` updates the game state (changing the plot's color, updating the `inventory` dictionary) and refreshes the UI text.
+    * `FarmManager.cs` updates the game state (e.g., changing the plot's color, updating the `inventory` dictionary) and refreshes the UI text.
 
 ---
 
@@ -50,9 +49,9 @@ Our solution is an **AI-Remake** that uses natural voice commands to perform all
 
 * **Game Engine:** **Unity** (to create a 3D mock-up of the game environment)
 * **Voice & NLU Platform:** **Neocortex**
-    *  This was a hackathon-provided tool.
-    * We used the Neocortex web platform to define our `PlantCrop` and `HarvestCrop` intents and train the AI on sample "utterances."
-    *  We used the Neocortex Unity SDK to connect our game to the AI in real-time[cite: 148, 156].
+    * This was a hackathon-provided tool.
+    * We used the Neocortex web platform to define our `PlantCrop`, `HarvestCrop` and `BakeBread` actions and train the AI on sample "intents"
+    * We used the Neocortex Unity SDK to connect our game to the AI in real-time[cite: 148, 156].
 * **Language:** **C#**
 
 ---
@@ -67,19 +66,15 @@ Our solution is an **AI-Remake** that uses natural voice commands to perform all
 3.  **Install Neocortex SDK:**
     * Go to `Window > Package Manager`.
     * Click the `+` icon and select `Add package from git URL...`.
-    *  Paste the SDK Git URL from the Neocortex documentation: `https://github.com/neocortex-link/neocortex-unity-sdk`
+    * Paste the SDK Git URL from the Neocortex documentation: `https://github.com/neocortex-link/neocortex-unity-sdk`
 4.  **Configure Neocortex:**
     *  Create a [Neocortex account](https://neocortex.link/).
-    *  Go to **Settings > Redeem Code Section**.
-    *  Enter the hackathon code **`AIGAMEHACK2025`** to get 2000 credits.
-    * Create a new "Character" in the Neocortex dashboard.
-    * Go to the "Actions" tab and create two new actions: `PlantCrop` and `HarvestCrop`.
-    * For `PlantCrop`, add entities for `crop_name` and `plot_id`. Add sample utterances like "plant wheat on plot 1" or "plant corn."
-    * For `HarvestCrop`, add the `plot_id` entity. Add sample utterances like "harvest plot 1" or "collect my crops."
+    *  Generate an API Key in the Neocortex dashboard.
 5.  **Link to Unity:**
-    * Generate an API Key in the Neocortex dashboard.
-    * In the Unity scene, find the `NeocortexHandler` GameObject.
-    * On its `Character` component, paste your **API Key** and **Character ID**.
+    * In the Unity top menu bar, navigate to Tools > Neocortex > API Key Setup.
+    * Paste your generated API Key into the window that appears and save.
+    * In the Unity AIDay scene, find the `NeocortexHandler` GameObject.
+    * On its `Character` component, paste the **Project ID**: cmh7dt2bt0001l404pepwl4hi
 6.  **Run:**
     * Press **Play** in the Unity Editor.
     * Allow microphone access when prompted.
@@ -90,9 +85,8 @@ Our solution is an **AI-Remake** that uses natural voice commands to perform all
 ## 💡 Future Ideas
 
 With more time, we would love to:
-* **Expand Commands:** Add logic for feeding animals, selling items from the inventory, and crafting goods.
+* **Expand Commands:** Add logic for feeding animals, selling items from the inventory, and crafting other goods.
 * **Add Seed Inventory:** Modify `PlantCrop` to check if the player *has* a "seed" in their inventory before allowing them to plant.
-* **AI Feedback:** Have the AI respond with voice to confirm actions ("Okay, planting wheat!") or report errors ("Sorry, that plot is already growing something.").
 * **Query Commands:** Implement "read" commands like "What's in my inventory?" or "What's growing on plot 3?"
 
 ---
