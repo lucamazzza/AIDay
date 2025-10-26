@@ -2,9 +2,8 @@
 
 > A submission for the Supercell Global AI Game Hackathon, reimagining game interaction with voice.
 
-### Demo Video
+<center><img src="/Assets/Resources/image.png" height=500></center>
 
-[![Watch the video](https://img.youtube.com/vi/_5tFXJQIzi4/0.jpg)](https://www.youtube.com/watch?v=_5tFXJQIzi4)
 
 ## 🚀 The Project
 
@@ -25,6 +24,16 @@ Our solution is an **AI-Remake** that uses natural voice commands to perform all
     * **Harvest:** Harvest a specific plot, which automatically adds the item to your inventory.
     * **Bake:** Use your harvested crops to bake food.
 * **Real-time UI:** The on-screen UI updates instantly to show the contents of your inventory.
+
+---
+
+### Demo Video
+
+<center>
+   
+[![Watch the video](https://img.youtube.com/vi/_5tFXJQIzi4/0.jpg)](https://www.youtube.com/watch?v=_5tFXJQIzi4)
+
+</center>
 
 ---
 
@@ -70,6 +79,7 @@ Our solution is an **AI-Remake** that uses natural voice commands to perform all
 4.  **Configure Neocortex:**
     *  Create a [Neocortex account](https://neocortex.link/).
     *  Generate an API Key in the Neocortex dashboard.
+    *  Add the file `prompt.txt` into the knowledge tab.
 5.  **Link to Unity:**
     * In the Unity top menu bar, navigate to Tools > Neocortex > API Key Setup.
     * Paste your generated API Key into the window that appears and save.
