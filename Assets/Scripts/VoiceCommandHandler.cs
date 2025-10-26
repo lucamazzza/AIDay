@@ -147,8 +147,8 @@ public class VoiceCommandHandler : MonoBehaviour
             return;
         }
         // TODO: scommenta queste righe se vuoi effettivamente riprodurre l'audio
-        //audioSource.clip = audioClip;
-        //audioSource.Play();
+        audioSource.clip = audioClip;
+        audioSource.Play();
         Invoke(nameof(StartMicrophone), audioClip.length + 0.2f); 
     }
     
