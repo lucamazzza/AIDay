@@ -4,10 +4,16 @@ using System.Collections.Generic;
 
 public class FarmManager : MonoBehaviour
 {
-    public GameObject[] farmPlots;
-    public CropData[] crops;
-
+    public GameObject[] FarmPlots;
+    public CropData[] Crops;
+    public Dictionary<string, int> Inventory = new Dictionary<string, int>();
     public static FarmManager Instance { get; private set; }
+    
+    private string[] PlotStates;
+    [SerializeField] private TMP_Text CarrotAmountText;
+    [SerializeField] private TMP_Text CornAmountText;
+    [SerializeField] private TMP_Text PumpkinAmountText;
+    [SerializeField] private TMP_Text WheatAmountText;
 
     void Awake()
     {
@@ -20,12 +26,21 @@ public class FarmManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    void Start()
+    {
+        PlotStates = new string[FarmPlots.Length];
+        for (int i = 0; i < PlotStates.Length; i++)
+        {
+            PlotStates[i] = string.Empty;
+        }
+        UpdateInventoryUI();
+    }
 
     public void PlantCrop(string cropName, int plotId)
     {
         int arrayIndex = plotId;
         if (!PlotExists(plotId)) return;
-        CropBehaviour targetCropBehaviour = farmPlots[arrayIndex].GetComponent<CropBehaviour>();
+        CropBehaviour targetCropBehaviour = FarmPlots[arrayIndex].GetComponent<CropBehaviour>();
         if (targetCropBehaviour == null)
         {
             Debug.LogError($"FATALE: Componente CropBehaviour mancante sul plot {plotId}.");
@@ -35,53 +50,67 @@ public class FarmManager : MonoBehaviour
         switch (cropName.ToLower())
         {
             case "wheat":
-                newCropData = crops[4]; 
+                newCropData = Crops[4]; 
                 break;
             case "corn":
-                newCropData = crops[2];
+                newCropData = Crops[2];
                 break;
             case "carrot":
-                newCropData = crops[1];
+                newCropData = Crops[1];
                 break;
             case "pumpkin":
-                newCropData = crops[3];
+                newCropData = Crops[3];
                 break;
             default:
                 Debug.LogError($"Error: Crop '{cropName}' is not recognized.");
                 return; 
         }
         targetCropBehaviour.SetCrop(newCropData);
+        PlotStates[plotId] = cropName;
         string message = $"Planting {cropName} on plot {plotId}.";
         Debug.Log(message);
     }
-
     public void HarvestCrop(int plotId)
     {
         if (!PlotExists(plotId)) return;
-        CropBehaviour targetCropBehaviour = farmPlots[plotId].GetComponent<CropBehaviour>();
+        CropBehaviour targetCropBehaviour = FarmPlots[plotId].GetComponent<CropBehaviour>();
         if (!targetCropBehaviour.isFullyGrown) return;
-        targetCropBehaviour.SetCrop(crops[0]); 
+        targetCropBehaviour.SetCrop(Crops[0]); 
         string message = $"Harvesting plot {plotId}.";
         Debug.Log(message);
+        string cropName = PlotStates[plotId];
+        if (string.IsNullOrEmpty(cropName))
+        {
+            Debug.LogWarning($"Nothing to harvest on plot {plotId}");
+            return;
+        }
+        if (Inventory.ContainsKey(cropName)) 
+        {
+            Inventory[cropName]++;
+        }
+        else
+        {
+            Inventory[cropName] = 1;
+        }
+        PlotStates[plotId] = string.Empty;
+        UpdateInventoryUI();
     }
-
     private bool PlotExists(int plotId)
     {
-        if (plotId < 0 || plotId > farmPlots.Length)
+        if (plotId < 0 || plotId > FarmPlots.Length)
         {
             Debug.LogError($"Error: Plot {plotId} does not exist.");
             return false;
         }
         return true;
     }
-
     public int FindAvailablePlot()
     {
-        for (int i = 0; i< farmPlots.Length; i++)
+        for (int i = 0; i< FarmPlots.Length; i++)
         {
-            var plot = farmPlots[i];
+            var plot = FarmPlots[i];
             var plotCropData = plot.GetComponent<CropBehaviour>().cropData;
-            if (plotCropData == crops[0])
+            if (plotCropData == Crops[0])
             {
                 return i;
             }
@@ -89,27 +118,33 @@ public class FarmManager : MonoBehaviour
         Debug.Log("No available plots found.");
         return -1;
     }
-    
     public List<int> FindFullyGrownPlots(CropData crop) 
     {
         List<int> fullyGrown = new List<int>();
-        for (int i = 0; i < farmPlots.Length; i++)
+        for (int i = 0; i < FarmPlots.Length; i++)
         {
             if (crop == null)
             {
-                if (farmPlots[i].GetComponent<CropBehaviour>().isFullyGrown) 
+                if (FarmPlots[i].GetComponent<CropBehaviour>().isFullyGrown) 
                 {
                     fullyGrown.Add(i);
                 }
             }
             else
             {
-                if (farmPlots[i].GetComponent<CropBehaviour>().isFullyGrown && farmPlots[i].GetComponent<CropBehaviour>().cropData == crop) 
+                if (FarmPlots[i].GetComponent<CropBehaviour>().isFullyGrown && FarmPlots[i].GetComponent<CropBehaviour>().cropData == crop) 
                 {
                     fullyGrown.Add(i);
                 }
             }
         }
         return fullyGrown;
+    }
+    void UpdateInventoryUI()
+    {
+        CarrotAmountText.text = Inventory["carrot"] + "";
+        CornAmountText.text = Inventory["corn"] + "";
+        PumpkinAmountText.text = Inventory["pumpkin"] + "";
+        WheatAmountText.text = Inventory["wheat"] + "";
     }
 }
