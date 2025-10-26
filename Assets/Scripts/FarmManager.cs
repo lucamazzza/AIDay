@@ -6,6 +6,8 @@ public class FarmManager : MonoBehaviour
 {
     public GameObject[] FarmPlots;
     public CropData[] Crops;
+    public CraftingRecipe[] recipes;
+    public Bakery bakery;
     public Dictionary<string, int> Inventory = new Dictionary<string, int>();
     public static FarmManager Instance { get; private set; }
     
@@ -150,5 +152,46 @@ public class FarmManager : MonoBehaviour
             PumpkinAmountText.text = Inventory["pumpkin"] + "";
         if (Inventory.ContainsKey("wheat"))
             WheatAmountText.text = Inventory["wheat"] + "";
+    }
+
+  
+
+    public void BakeItem(string recipeName, int quantity)
+    {
+        CraftingRecipe recipeToBake = null;
+        foreach (var r in recipes)
+        {
+            if (r.recipeName.ToLower() == recipeName.ToLower())
+            {
+                recipeToBake = r;
+                break;
+            }
+        }
+
+        if (recipeToBake == null)
+        {
+            Debug.LogError($"Recipe not found: {recipeName}");
+            return;
+        }
+
+     
+
+        
+        if (!(Inventory.ContainsKey("wheat") && Inventory["wheat"] >= 3))
+        {
+            Debug.LogError($"Not enough ingredients for {recipeName}");
+            return;
+        }
+
+        
+        if (bakery.StartBaking(recipeToBake))
+        {
+            Inventory["wheat"] -= 3;
+            Debug.Log($"Sent one {recipeName} to bakery.");
+        }
+        else
+        {
+            Debug.Log("Busy bakery, can't bake now.");
+        }
     }
 }

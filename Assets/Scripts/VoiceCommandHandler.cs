@@ -23,20 +23,20 @@ public class VoiceCommandHandler : MonoBehaviour
         audioReceiver = GetComponent<AudioReceiver>();
         if (agent == null || audioReceiver == null)
         {
-            Debug.LogError("Mancano i componenti richiesti (NeocortexSmartAgent o AudioReceiver).");
+            Debug.LogError("some components missing (NeocortexSmartAgent o AudioReceiver).");
             return;
         }
         agent.OnTranscriptionReceived.AddListener(OnTranscription);
         audioReceiver.OnAudioRecorded.AddListener(OnAudioRecorded);
         agent.OnChatResponseReceived.AddListener(HandleChatResponse);
-        agent.OnAudioResponseReceived.AddListener(OnAudioResponseReceived); // Corretto
+        agent.OnAudioResponseReceived.AddListener(OnAudioResponseReceived); 
         audioReceiver.StartMicrophone();
-        Debug.Log("Microfono avviato. In attesa di comandi...");
+        Debug.Log("Microfono started. Waiting for commands...");
     }
 
     private void OnAudioRecorded(AudioClip audioClip)
     {
-        Debug.Log($"Audio registrato ({audioClip.samples} campioni), invio a Neocortex...");
+        Debug.Log($"Audio recorded ({audioClip.samples} samples), sending to Neocortex...");
         agent.AudioToAudio(audioClip);
     }
     private void OnTranscription(string message)
@@ -55,21 +55,21 @@ public class VoiceCommandHandler : MonoBehaviour
         Debug.LogWarning("--- FINE DEBUG JSON DA NEOCORTEX ---");
         if (string.IsNullOrEmpty(action))
         {
-            Debug.Log("Nessuna azione rilevata.");
+            Debug.Log("Any action found.");
             return;
         }
 
         if (action == "PLANT_CROP")
         {
-            ExtractPlantParameters(response.metadata, out string cropName, out int quantity);
+            ExtractParameters(response.metadata, out string cropName, out int quantity);
             if (string.IsNullOrEmpty(cropName) || quantity == 0)
             {
-                if (string.IsNullOrEmpty(cropName)) Debug.LogError("Azione PLANT_CROP: 'crop_name' non trovato.");
-                if (quantity == 0) Debug.LogWarning("Azione PLANT_CROP: 'quantity' non trovata o è 0.");
+                if (string.IsNullOrEmpty(cropName)) Debug.LogError("Action PLANT_CROP: 'crop_name' not found.");
+                if (quantity == 0) Debug.LogWarning("Action PLANT_CROP: 'quantity' not found or 0.");
                 return;
             }
 
-            Debug.Log($"Tentativo di piantare {quantity} {cropName}...");
+            Debug.Log($"Trying to plant {quantity} {cropName}...");
             int plantedCount = 0;
             for (int i = 0; i < quantity; i++)
             {
@@ -81,15 +81,15 @@ public class VoiceCommandHandler : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning($"Non ci sono più plot liberi. Piantati {plantedCount}/{quantity} {cropName}.");
+                    Debug.LogWarning($"Any free plots left. Planted {plantedCount}/{quantity} {cropName}.");
                     break;
                 }
             }
-            Debug.Log($"Piantati {plantedCount} {cropName} in totale.");
+            Debug.Log($"Planted {plantedCount} {cropName} in total.");
         }
         else if (action == "HARVEST_CROP")
         {
-            ExtractPlantParameters(response.metadata, out string cropName, out int quantity);
+            ExtractParameters(response.metadata, out string cropName, out int quantity);
             CropData cropToFind = null;
             if (!string.IsNullOrEmpty(cropName))
             {
@@ -109,58 +109,56 @@ public class VoiceCommandHandler : MonoBehaviour
             List<int> harvesteable = farmManager.FindFullyGrownPlots(cropToFind);
             if (harvesteable.Count == 0)
             {
-                Debug.Log("Nessuna coltura pronta per il raccolto trovata.");
+                Debug.Log("not crops ready to harvest");
             }
             foreach (int i in harvesteable)
             {
                 farmManager.HarvestCrop(i);
             }
         }
+        else if (action == "BAKE_BREAD") 
+        {
+
+            ExtractParameters(response.metadata, out string itemName, out int quantity);
+
+            if (string.IsNullOrEmpty(itemName) || quantity == 0)
+            {
+                Debug.LogError("Action BAKE_BREAD: 'item_name' o 'quantity' not found.");
+                return;
+            }
+
+            farmManager.BakeItem(itemName, quantity);
+        }
         else
         {
-            Debug.LogWarning($"Azione non riconosciuta: {action}");
+            Debug.LogWarning($"Action not recognized: {action}");
         }
     }
     private void StartMicrophone()
     {
         audioReceiver.StartMicrophone();
-        Debug.Log("Microfono riavviato per il prossimo comando.");
+        Debug.Log("Started microphone for next command");
     }
     private void OnAudioResponseReceived(AudioClip audioClip)
     {
         if (audioSource == null)
         {
-            Debug.LogError("AudioSource non assegnato! Impossibile riprodurre la risposta.");
+            Debug.LogError("AudioSource not assigned!");
             return;
         }
         // TODO: scommenta queste righe se vuoi effettivamente riprodurre l'audio
         //audioSource.clip = audioClip;
         //audioSource.Play();
-        Invoke(nameof(StartMicrophone), audioClip.length + 0.2f); // Aggiunto un piccolo buffer
+        Invoke(nameof(StartMicrophone), audioClip.length + 0.2f); 
     }
-    private string FormatActionName(string actionName)
-    {
-        if (string.IsNullOrEmpty(actionName)) return string.Empty;
-        if (actionName.Contains("_"))
-        {
-            string[] parts = actionName.Split('_');
-            string formattedName = "";
-            foreach (string part in parts)
-            {
-                if (part.Length > 0)
-                    formattedName += char.ToUpper(part[0]) + part.Substring(1).ToLower();
-            }
-            return formattedName;
-        }
-        return char.ToUpper(actionName[0]) + actionName.Substring(1);
-    }
-    private void ExtractPlantParameters(Interactable[] metadata, out string cropName, out int quantity)
+    
+    private void ExtractParameters(Interactable[] metadata, out string cropName, out int quantity)
     {
         cropName = null;
-        quantity = 0;
+        quantity = 1;
         if (metadata == null || metadata.Length == 0)
         {
-            Debug.LogWarning("ExtractPlantParameters fallito: array metadata è vuoto.");
+            Debug.LogWarning("ExtractPlantParameters failed: array metadata is empty.");
             return;
         }
         foreach (Interactable item in metadata)
@@ -170,18 +168,19 @@ public class VoiceCommandHandler : MonoBehaviour
             {
                 quantity = parsedQuantity;
             }
-            else if (IsKnownCrop(item.name))
+            else if (IsKnownItem(item.name))
             {
                 cropName = item.name.ToLower();
             }
         }
     }
-    private bool IsKnownCrop(string name)
+    private bool IsKnownItem(string name)
     {
         string lowerName = name.ToLower();
         return lowerName == "wheat" ||
                lowerName == "corn" ||
                lowerName == "carrot" ||
-               lowerName == "pumpkin";
+               lowerName == "pumpkin" ||
+               lowerName == "bread";
     }
 }
