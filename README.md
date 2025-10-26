@@ -1,2 +1,106 @@
-# AIDay
-AI applied to the best game ever: HayDay by Supercell
+# 🎙️🌾 AIDay: An AI-Remake
+
+> A submission for the Supercell Global AI Game Hackathon, reimagining game interaction with voice.
+
+### Demo Video
+
+[![Watch the video](https://img.youtube.com/vi/_5tFXJQIzi4/0.jpg)](https://www.youtube.com/watch?v=_5tFXJQIzi4)
+
+## 🚀 The Project
+
+This project is a proof-of-concept that reimagines classic mobile farming games (like *HayDay*) with an accessibility-first approach. Many mobile games rely heavily on precise and repetitive touch interactions, which can be a barrier for players with physical disabilities.
+
+Our solution is an **AI-Remake** that uses natural voice commands to perform all key game actions. The player can simply speak, and an AI model parses their intent, translating it directly into game logic.
+
+### Hackathon Challenge
+* **Challenge:** **`AI-Remake`**
+*  **Prompt:** "Reimagine a classic game or mechanic with Al, your creation should be something that couldn't exist without Al."   
+* **Our Fit:** This project fits perfectly, as it uses generative AI's natural language understanding (NLU) to create a new, voice-native control scheme that simply couldn't exist with traditional game mechanics.
+
+## ✨ Features
+
+* **Natural Language Commands:** No rigid keywords! Say "Plant some wheat on the first plot" or "Can you harvest plot 2?" and the AI understands.
+* **Core Game Actions:**
+    * **Plant:** Plant different crops (wheat, corn, carrots) on specific plots.
+    * **Harvest:** Harvest a specific plot, which automatically adds the item to your inventory.
+* **Full Inventory System:**
+    * Smart logic prevents planting on an occupied plot or harvesting an empty one.
+* **Real-time UI:** The on-screen UI updates instantly to show the contents of your inventory.
+
+---
+
+## 🛠️ How It Works (Architecture)
+
+ This project's "magic" comes from connecting a game engine (Unity) to a powerful conversational AI platform (Neocortex), which was one of the tools provided for the hackathon.
+
+1.  **Voice Input (Player):** The player speaks a command (e.g., "Harvest plot 2") into their microphone.
+2.  **NLU (Neocortex):** The audio is streamed to the **Neocortex** platform. Neocortex's AI parses the audio and identifies:
+    * **The Intent (Action):** `HarvestCrop`
+    * **The Entities (Details):** `{"plot_id": "plot 2"}`
+3.  **Command (SDK):** Neocortex sends this structured data (the intent and its entities) back to our game via its Unity SDK.
+4.  **Game Logic (Unity):**
+    * A `VoiceCommandHandler.cs` script receives the event from the SDK.
+    * It safely parses the entities (e.g., converting "plot 2" to the integer `2`).
+    * It calls the appropriate function on our singleton `FarmManager.cs`.
+    * `FarmManager.cs` updates the game state (changing the plot's color, updating the `inventory` dictionary) and refreshes the UI text.
+
+---
+
+## 💻 Technology Used
+
+* **Game Engine:** **Unity** (to create a 3D mock-up of the game environment)
+* **Voice & NLU Platform:** **Neocortex**
+    *  This was a hackathon-provided tool.
+    * We used the Neocortex web platform to define our `PlantCrop` and `HarvestCrop` intents and train the AI on sample "utterances."
+    *  We used the Neocortex Unity SDK to connect our game to the AI in real-time[cite: 148, 156].
+* **Language:** **C#**
+
+---
+
+## 🔧 How to Run
+
+1.  **Clone Repository:**
+    ```bash
+    git clone https://github.com/lucamazzza/AIDay.git
+    ```
+2.  **Open in Unity:** Open the project in Unity Hub (tested with `Unity 6000.2.4f1`).
+3.  **Install Neocortex SDK:**
+    * Go to `Window > Package Manager`.
+    * Click the `+` icon and select `Add package from git URL...`.
+    *  Paste the SDK Git URL from the Neocortex documentation: `https://github.com/neocortex-link/neocortex-unity-sdk`
+4.  **Configure Neocortex:**
+    *  Create a [Neocortex account](https://neocortex.link/).
+    *  Go to **Settings > Redeem Code Section**.
+    *  Enter the hackathon code **`AIGAMEHACK2025`** to get 2000 credits.
+    * Create a new "Character" in the Neocortex dashboard.
+    * Go to the "Actions" tab and create two new actions: `PlantCrop` and `HarvestCrop`.
+    * For `PlantCrop`, add entities for `crop_name` and `plot_id`. Add sample utterances like "plant wheat on plot 1" or "plant corn."
+    * For `HarvestCrop`, add the `plot_id` entity. Add sample utterances like "harvest plot 1" or "collect my crops."
+5.  **Link to Unity:**
+    * Generate an API Key in the Neocortex dashboard.
+    * In the Unity scene, find the `NeocortexHandler` GameObject.
+    * On its `Character` component, paste your **API Key** and **Character ID**.
+6.  **Run:**
+    * Press **Play** in the Unity Editor.
+    * Allow microphone access when prompted.
+    * Start speaking commands!
+
+---
+
+## 💡 Future Ideas
+
+With more time, we would love to:
+* **Expand Commands:** Add logic for feeding animals, selling items from the inventory, and crafting goods.
+* **Add Seed Inventory:** Modify `PlantCrop` to check if the player *has* a "seed" in their inventory before allowing them to plant.
+* **AI Feedback:** Have the AI respond with voice to confirm actions ("Okay, planting wheat!") or report errors ("Sorry, that plot is already growing something.").
+* **Query Commands:** Implement "read" commands like "What's in my inventory?" or "What's growing on plot 3?"
+
+---
+
+## 🧑‍💻 The Team
+
+* **Luca Mazza**: [GitHub](https://github.com/lucamazzza) | [LinkedIn](https://linkedin.com/in/lucamazzza)
+* **Giada Galdiolo**: [GitHub](https://github.com/giadagaldiolo) | [LinkedIn](https://linkedin.com/in/giadagaldiolo)
+* **Andre Peiti Ocampo**: [GitHub](https://github.com/linkswitch19) | [LinkedIn](https://www.linkedin.com/in/andre-peiti-ocampo-87a1a9313/)
+
+*Thank you for judging our project!*
