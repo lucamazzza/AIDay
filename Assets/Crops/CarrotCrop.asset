@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4a622d53ea04210a628556df932e66, type: 3}
+  m_Name: CarrotCrop
+  m_EditorClassIdentifier: Assembly-CSharp::CropData
+  cropName: Carrot
+  growthTime: 60
+  growthStages:
+  - {fileID: 21300000, guid: 03b2fd8d713bbbd40937dab090fad702, type: 3}
+  - {fileID: 21300000, guid: b00fdb87d6e932845944ccdee166555c, type: 3}
+  - {fileID: 21300000, guid: aef790b066999ed4aafa9bdbf0bf784c, type: 3}
+  - {fileID: 21300000, guid: 7d7e69ba71d02314883f9c5d67e08b3e, type: 3}
