@@ -28,12 +28,8 @@ Our solution is an **AI-Remake** that uses natural voice commands to perform all
 ---
 
 ### Demo Video
-
-<center>
    
-[![Watch the video](https://img.youtube.com/vi/_5tFXJQIzi4/0.jpg)](https://www.youtube.com/watch?v=_5tFXJQIzi4)
-
-</center>
+[![Watch the video](https://i9.ytimg.com/vi/NisjA_rUI50/mqdefault.jpg?v=68fe43db&sqp=CNSI-ccG&rs=AOn4CLAN8bUJrpXPkpukA61FoOHIC9lFWw)](https://www.youtube.com/watch?v=NisjA_rUI50)
 
 ---
 
