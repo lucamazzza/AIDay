@@ -1,10 +1,11 @@
 using Neocortex;
 using Neocortex.Data;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Collections;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
+using UnityEngine.Audio; // Aggiunto per AudioSource
 
 [RequireComponent(typeof(NeocortexSmartAgent))]
 [RequireComponent(typeof(AudioReceiver))]
@@ -13,9 +14,10 @@ public class VoiceCommandHandler : MonoBehaviour
     [SerializeField] private NeocortexSmartAgent agent;
     [SerializeField] private AudioReceiver audioReceiver;
     [SerializeField] private FarmManager farmManager;
-    [SerializeField] private TMP_Text text; // Assicurati di usare questa variabile 'text'
+    [SerializeField] private TMP_Text text;
+    [SerializeField] private AudioSource audioSource;
 
-    void Start()
+    void Start()
     {
         agent = GetComponent<NeocortexSmartAgent>();
         audioReceiver = GetComponent<AudioReceiver>();
@@ -26,29 +28,26 @@ public class VoiceCommandHandler : MonoBehaviour
         }
 
         // --- ISCRIZIONE AGLI EVENTI ---
-        agent.OnTranscriptionReceived.AddListener(OnTranscription); // Chiama una funzione nominata
-        audioReceiver.OnAudioRecorded.AddListener(OnAudioRecorded); // Chiama una funzione nominata
-        agent.OnChatResponseReceived.AddListener(HandleChatResponse); // Chiama la tua logica principale
+        agent.OnTranscriptionReceived.AddListener(OnTranscription);
+        audioReceiver.OnAudioRecorded.AddListener(OnAudioRecorded);
+        agent.OnChatResponseReceived.AddListener(HandleChatResponse);
+        agent.OnAudioResponseReceived.AddListener(OnAudioResponseReceived); // Corretto
 
-        // --- AVVIO INIZIALE ---
-        // Avvia l'ascolto la prima volta. Non usare una coroutine.
-        audioReceiver.StartMicrophone();
+        // --- AVVIO INIZIALE ---
+        audioReceiver.StartMicrophone();
         Debug.Log("Microfono avviato. In attesa di comandi...");
     }
 
-    // Evento: L'utente ha finito di parlare e l'audio è pronto
     private void OnAudioRecorded(AudioClip audioClip)
     {
         Debug.Log($"Audio registrato ({audioClip.samples} campioni), invio a Neocortex...");
-        // Invia l'audio per l'analisi (azione E audio)
-        agent.AudioToAudio(audioClip);
+        agent.AudioToAudio(audioClip);
     }
 
-    // Evento: Neocortex ha trascritto il testo (solo per debug)
     private void OnTranscription(string message)
     {
         Debug.Log($"You (Transcription): {message}");
-        if (text != null) text.text = message; // Aggiorna la UI con quello che hai detto
+        if (text != null) text.text = message;
     }
 
     // Evento: Neocortex ha analizzato la richiesta e invia l'azione
@@ -57,20 +56,19 @@ public class VoiceCommandHandler : MonoBehaviour
         string action = response.action;
         Debug.Log($"Neocortex Action: {action}");
         Debug.Log($"Neocortex Message: {response.message}");
-        if (text != null) text.text = response.message; // Aggiorna la UI con la risposta dell'IA
+        if (text != null) text.text = response.message;
 
-        // --- DEBUG JSON (mantienilo per ora) ---
-        string jsonString = JsonUtility.ToJson(response, true);
+        string jsonString = JsonUtility.ToJson(response, true);
         Debug.LogWarning("--- INIZIO DEBUG JSON DA NEOCORTEX ---");
         Debug.Log(jsonString);
         Debug.LogWarning("--- FINE DEBUG JSON DA NEOCORTEX ---");
-        // --- FINE DEBUG ---
 
-        if (string.IsNullOrEmpty(action))
+        if (string.IsNullOrEmpty(action))
         {
             Debug.Log("Nessuna azione rilevata.");
-            // RI-AVVIA L'ASCOLTO (CICLO)
-            audioReceiver.StartMicrophone();
+            // --- MODIFICA ---
+            // NON riavviare il microfono qui!
+            // audioReceiver.StartMicrophone(); // RIMOSSO
             return;
         }
 
@@ -83,8 +81,9 @@ public class VoiceCommandHandler : MonoBehaviour
                 if (string.IsNullOrEmpty(cropName)) Debug.LogError("Azione PLANT_CROP: 'crop_name' non trovato.");
                 if (quantity == 0) Debug.LogWarning("Azione PLANT_CROP: 'quantity' non trovata o è 0.");
 
-                // RI-AVVIA L'ASCOLTO (CICLO)
-                audioReceiver.StartMicrophone();
+                // --- MODIFICA ---
+                // NON riavviare il microfono qui!
+                // audioReceiver.StartMicrophone(); // RIMOSSO
                 return;
             }
 
@@ -108,8 +107,8 @@ public class VoiceCommandHandler : MonoBehaviour
         }
         else if (action == "HARVEST_CROP")
         {
-            ExtractPlantParameters(response.metadata, out string cropName, out int quantity); // 'quantity' verrà ignorata qui
-            CropData cropToFind = null;
+            ExtractPlantParameters(response.metadata, out string cropName, out int quantity);
+            CropData cropToFind = null;
             if (!string.IsNullOrEmpty(cropName))
             {
                 Debug.Log($"Harvesting specific crop: {cropName}");
@@ -141,30 +140,45 @@ public class VoiceCommandHandler : MonoBehaviour
             Debug.LogWarning($"Azione non riconosciuta: {action}");
         }
 
-        // RI-AVVIA L'ASCOLTO (CICLO)
-        // Chiama questo UNA SOLA VOLTA alla fine del metodo.
-        audioReceiver.StartMicrophone();
+        // --- MODIFICA ---
+        // NON riavviare il microfono qui!
+        // audioReceiver.StartMicrophone(); // RIMOSSO
     }
 
-    // --- NON HAI PIÙ BISOGNO DI 'MyCoroutine' O 'WaitNSeconds' ---
-    /*
-    IEnumerator MyCoroutine()
-    {
-        audioReceiver.StartMicrophone();
-        yield return new WaitForSeconds(5f);
-        audioReceiver.StopMicrophone();
-    }
+    // --- METODO AGGIUNTO ---
+    // Questo è il metodo helper che 'Invoke' sta cercando.
+    // Riavvia l'ascolto.
+    private void StartMicrophone()
+    {
+        audioReceiver.StartMicrophone();
+        Debug.Log("Microfono riavviato per il prossimo comando.");
+    }
 
-    IEnumerator WaitNSeconds(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-    }
-    */
+    // Questo gestisce la riproduzione dell'audio e riavvia il ciclo
+    private void OnAudioResponseReceived(AudioClip audioClip)
+    {
+        if (audioSource == null)
+        {
+            Debug.LogError("AudioSource non assegnato! Impossibile riprodurre la risposta.");
+            return;
+        }
 
-    // --- LE TUE FUNZIONI HELPER (QUESTE SONO CORRETTE) ---
+        audioSource.clip = audioClip;
+        audioSource.Play();
+
+        // Questa è ora l'UNICA riga che riavvia il microfono,
+        // e lo fa solo DOPO che l'IA ha finito di parlare.
+        Invoke(nameof(StartMicrophone), audioClip.length + 0.2f); // Aggiunto un piccolo buffer
+
+        // --- MODIFICA ---
+        // Questa riga causava un errore di compilazione perché 'audioChatInput' non esiste.
+        // audioChatInput.SetChatState(true); // RIMOSSO
+    }
+
+    // --- Funzioni Helper (Già corrette) ---
+
     private string FormatActionName(string actionName)
     {
-        // ... (il tuo codice è corretto) ...
         if (string.IsNullOrEmpty(actionName)) return string.Empty;
         if (actionName.Contains("_"))
         {
@@ -182,8 +196,7 @@ public class VoiceCommandHandler : MonoBehaviour
 
     private void ExtractPlantParameters(Interactable[] metadata, out string cropName, out int quantity)
     {
-        // ... (il tuo codice è corretto) ...
-        cropName = null;
+        cropName = null;
         quantity = 0;
         if (metadata == null || metadata.Length == 0)
         {
@@ -206,11 +219,10 @@ public class VoiceCommandHandler : MonoBehaviour
 
     private bool IsKnownCrop(string name)
     {
-        // ... (il tuo codice è corretto) ...
-        string lowerName = name.ToLower();
+        string lowerName = name.ToLower();
         return lowerName == "wheat" ||
-           lowerName == "corn" ||
-           lowerName == "carrot" ||
-           lowerName == "pumpkin";
+               lowerName == "corn" ||
+               lowerName == "carrot" ||
+               lowerName == "pumpkin";
     }
 }
