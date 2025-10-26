@@ -2986,7 +2986,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 50
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3199,12 +3199,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d9d2654fea2742bca764430bdddbd70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FarmManager
-  FarmPlots: []
-  Crops: []
-  CarrotAmountText: {fileID: 0}
-  CornAmountText: {fileID: 0}
-  PumpkinAmountText: {fileID: 0}
-  WheatAmountText: {fileID: 0}
+  FarmPlots:
+  - {fileID: 1640984029}
+  - {fileID: 2012478919}
+  - {fileID: 1232549912}
+  - {fileID: 788770048}
+  - {fileID: 1376289862}
+  - {fileID: 1800056333}
+  - {fileID: 281992077}
+  - {fileID: 1402554689}
+  - {fileID: 1678978225}
+  - {fileID: 1562156268}
+  - {fileID: 662405267}
+  - {fileID: 591061606}
+  - {fileID: 1931040237}
+  - {fileID: 1987153299}
+  - {fileID: 1092135859}
+  - {fileID: 1201863208}
+  - {fileID: 192009121}
+  - {fileID: 1553823845}
+  - {fileID: 613700872}
+  - {fileID: 1764013922}
+  - {fileID: 1919200230}
+  - {fileID: 2112921649}
+  - {fileID: 829395538}
+  - {fileID: 22237459}
+  Crops:
+  - {fileID: 11400000, guid: c2ccc3c7dd9b84bf4bb0b9d185dc5695, type: 2}
+  - {fileID: 11400000, guid: dac57e4d5403a4d6d95756e74bf393b2, type: 2}
+  - {fileID: 11400000, guid: 58d6474e1cf0d43c6b29f0633e11ef52, type: 2}
+  - {fileID: 11400000, guid: 0ba26fc006a7b40b794c2427f92614f2, type: 2}
+  - {fileID: 11400000, guid: ca88c925b3d4145aa82c129caee690e0, type: 2}
+  CarrotAmountText: {fileID: 2058619874}
+  CornAmountText: {fileID: 1173132389}
+  PumpkinAmountText: {fileID: 598916561}
+  WheatAmountText: {fileID: 812250747}
 --- !u!1 &608945237
 GameObject:
   m_ObjectHideFlags: 0
@@ -4609,7 +4638,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 50
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5827,7 +5856,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 50
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6274,6 +6303,10 @@ RectTransform:
   - {fileID: 1825633330}
   - {fileID: 1230162715}
   - {fileID: 1535797836}
+  - {fileID: 116129596}
+  - {fileID: 271326000}
+  - {fileID: 1931458812}
+  - {fileID: 2054784925}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7692,6 +7725,7 @@ GameObject:
   - component: {fileID: 1534292128}
   - component: {fileID: 1534292127}
   - component: {fileID: 1534292125}
+  - component: {fileID: 1534292129}
   m_Layer: 0
   m_Name: NeocortexHandler
   m_TagString: Untagged
@@ -7730,7 +7764,7 @@ MonoBehaviour:
   audioReceiver: {fileID: 1534292127}
   farmManager: {fileID: 601779376}
   text: {fileID: 474322212}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 1534292129}
 --- !u!114 &1534292127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7780,6 +7814,103 @@ MonoBehaviour:
   OnChatHistoryReceived:
     m_PersistentCalls:
       m_Calls: []
+--- !u!82 &1534292129
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534292123}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1535797835
 GameObject:
   m_ObjectHideFlags: 0
@@ -11828,7 +11959,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 50
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
