@@ -47,7 +47,6 @@ public class VoiceCommandHandler : MonoBehaviour
     private void OnTranscription(string message)
     {
         Debug.Log($"You (Transcription): {message}");
-        if (text != null) text.text = message;
     }
 
     // Evento: Neocortex ha analizzato la richiesta e invia l'azione
@@ -163,8 +162,9 @@ public class VoiceCommandHandler : MonoBehaviour
             return;
         }
 
-        audioSource.clip = audioClip;
-        audioSource.Play();
+        // TODO: scommenta queste righe se vuoi effettivamente riprodurre l'audio
+        //audioSource.clip = audioClip;
+        //audioSource.Play();
 
         // Questa è ora l'UNICA riga che riavvia il microfono,
         // e lo fa solo DOPO che l'IA ha finito di parlare.
