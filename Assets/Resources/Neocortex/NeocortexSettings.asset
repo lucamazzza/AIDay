@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41a6e71c2c8d57c43bc5726ec3a9f42d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0, type: 3}
   m_Name: NeocortexSettings
   m_EditorClassIdentifier: Neocortex.Runtime::Neocortex.Data.NeocortexSettings
-  apiKey: sk_09a8ed86-f7d4-45c5-86b2-9f94abd64ad5
+  apiKey: 0
