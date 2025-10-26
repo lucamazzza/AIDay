@@ -142,9 +142,13 @@ public class FarmManager : MonoBehaviour
     }
     void UpdateInventoryUI()
     {
-        CarrotAmountText.text = Inventory["carrot"] + "";
-        CornAmountText.text = Inventory["corn"] + "";
-        PumpkinAmountText.text = Inventory["pumpkin"] + "";
-        WheatAmountText.text = Inventory["wheat"] + "";
+        if (Inventory.ContainsKey("carrot"))
+            CarrotAmountText.text = Inventory["carrot"] + "";
+        if (Inventory.ContainsKey("corn"))
+            CornAmountText.text = Inventory["corn"] + "";
+        if (Inventory.ContainsKey("pumpkin"))
+            PumpkinAmountText.text = Inventory["pumpkin"] + "";
+        if (Inventory.ContainsKey("wheat"))
+            WheatAmountText.text = Inventory["wheat"] + "";
     }
 }
