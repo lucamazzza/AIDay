@@ -45,7 +45,7 @@ public class FarmManager : MonoBehaviour
         CropBehaviour targetCropBehaviour = FarmPlots[arrayIndex].GetComponent<CropBehaviour>();
         if (targetCropBehaviour == null)
         {
-            Debug.LogError($"FATALE: Componente CropBehaviour mancante sul plot {plotId}.");
+            Debug.LogError($"FATAL: Component CropBehaviour missing on plot {plotId}.");
             return;
         }
         CropData newCropData = null;

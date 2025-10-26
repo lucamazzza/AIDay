@@ -23,7 +23,7 @@ public class VoiceCommandHandler : MonoBehaviour
         audioReceiver = GetComponent<AudioReceiver>();
         if (agent == null || audioReceiver == null)
         {
-            Debug.LogError("some components missing (NeocortexSmartAgent o AudioReceiver).");
+            Debug.LogError("some components missing (NeocortexSmartAgent or AudioReceiver).");
             return;
         }
         agent.OnTranscriptionReceived.AddListener(OnTranscription);
@@ -31,7 +31,7 @@ public class VoiceCommandHandler : MonoBehaviour
         agent.OnChatResponseReceived.AddListener(HandleChatResponse);
         agent.OnAudioResponseReceived.AddListener(OnAudioResponseReceived); 
         audioReceiver.StartMicrophone();
-        Debug.Log("Microfono started. Waiting for commands...");
+        Debug.Log("Microphone started. Waiting for commands...");
     }
 
     private void OnAudioRecorded(AudioClip audioClip)
@@ -49,10 +49,12 @@ public class VoiceCommandHandler : MonoBehaviour
         Debug.Log($"Neocortex Action: {action}");
         Debug.Log($"Neocortex Message: {response.message}");
         if (text != null) text.text = response.message;
+
         string jsonString = JsonUtility.ToJson(response, true);
         Debug.LogWarning("--- INIZIO DEBUG JSON DA NEOCORTEX ---");
         Debug.Log(jsonString);
         Debug.LogWarning("--- FINE DEBUG JSON DA NEOCORTEX ---");
+
         if (string.IsNullOrEmpty(action))
         {
             Debug.Log("Any action found.");
@@ -146,7 +148,7 @@ public class VoiceCommandHandler : MonoBehaviour
             Debug.LogError("AudioSource not assigned!");
             return;
         }
-        // TODO: scommenta queste righe se vuoi effettivamente riprodurre l'audio
+        
         audioSource.clip = audioClip;
         audioSource.Play();
         Invoke(nameof(StartMicrophone), audioClip.length + 0.2f); 

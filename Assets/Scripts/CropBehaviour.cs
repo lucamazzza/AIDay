@@ -42,7 +42,7 @@ public class CropBehaviour : MonoBehaviour
     {
         if (newData == null)
         {
-            Debug.LogWarning("SetCrop chiamato con dati nulli (probabilmente raccolto).");
+            Debug.LogWarning("SetCrop called with null values.");
             return;
         }
         this.cropData = newData;
@@ -55,7 +55,7 @@ public class CropBehaviour : MonoBehaviour
         }
         else
         {
-            Debug.LogError("CropData non ha stadi di crescita!");
+            Debug.LogError("CropData do not have grow stages!");
         }
     }
 
